@@ -1,4 +1,4 @@
-import { mutation } from "./_generated/server";
+import { mutation, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 
 export const createPendingOrder = mutation({
@@ -73,5 +73,16 @@ export const createPendingOrder = mutation({
         }
 
         return orderId;
+    },
+});
+
+// We use internalMutation so it can ONLY be triggered by our secure PayPal action,
+// preventing users from manually calling it from the frontend to mark their own orders as paid.
+export const markAsPaid = internalMutation({
+    args: {orderId: v.id("orders")},
+    handler: async (ctx, args) => {
+        await ctx.db.patch(args.orderId, {
+            status: "paid",
+        });
     },
 });

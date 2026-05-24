@@ -1,15 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { useQuery, useMutation } from "convex/react";
+import { useMutation } from "convex/react";
 import { api } from  "@/convex/_generated/api";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
-export default function CartDrawer() {
-    const [isOpen, setIsOpen] = useState(false);
+// Props expected from the Navbar
+interface CartDrawerProps {
+    isOpen: boolean;
+    setIsOpen: (isOpen: boolean) => void;
+    // eslint-disable-next-line
+    cartItems: any[]; // Data will be passed down from the Navbar
+}
 
-    // Fetch the cart data
-    const cartItems = useQuery(api.cart.getCart) || [];
+export default function CartDrawer({ isOpen, setIsOpen, cartItems }: CartDrawerProps) {
+    const router = useRouter();
     const removeFromCart = useMutation(api.cart.removeFromCart);
 
     // Calculate the total cart value
@@ -17,33 +22,18 @@ export default function CartDrawer() {
         return total + ((item.product?.price || 0) * item.quantity);
     }, 0);
 
-    const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0);
-
     return (
         <>
-            {/* Floating Cart Button */}
-            <button
-                onClick={() => setIsOpen(true)}
-                className="relative p-2 text-zinc-400 hover:text-white transition-colors"
-            >
-                Cart
-                {cartCount > 0 && (
-                    <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 pu-0.5 text-[10px] font-bold leading-none text-white transform translate-z-1/4 bg-blue-600 rounded-full">
-                        {cartCount}
-                    </span>
-                )}
-            </button>
-
             {/* Backdrop Overlay */}
             <div 
-                className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-poacity duration-300 
+                className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] transition-opacity duration-300 
                 ${isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
                 onClick={() => setIsOpen(false)}
             />
 
             {/* Slide-out Drawer Panel */}
             <div
-                className={`fixed top-0 right-0 h-full w-full sm:w-[400px] bg-zinc-950 border-l border-zinc-800 z-50 transform transition-transform duration-300 ease-in-out flex flex-col
+                className={`fixed top-0 right-0 h-full w-full sm:w-[400px] bg-zinc-950 border-l border-zinc-800 z-[101] transform transition-transform duration-300 ease-in-out flex flex-col
                     ${isOpen ? "translate-x-0" : "translate-x-full"}`}
             >
                 {/* Drawer Header */}
@@ -101,7 +91,13 @@ export default function CartDrawer() {
                                 ${(cartTotal / 100).toFixed(2)}
                             </span>
                         </div>
-                        <button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-4 rounded-lg transition-colors">
+                        <button 
+                            onClick={() => {
+                                setIsOpen(false);
+                                router.push("/checkout");
+                            }}
+                            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-4 rounded-lg transition-colors"
+                        >
                             Continue to Checkout
                         </button>
                     </div>

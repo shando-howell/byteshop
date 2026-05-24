@@ -11,6 +11,7 @@
 import type * as cart from "../cart.js";
 import type * as http from "../http.js";
 import type * as orders from "../orders.js";
+import type * as paypal from "../paypal.js";
 import type * as products from "../products.js";
 import type * as seed from "../seed.js";
 import type * as users from "../users.js";
@@ -25,6 +26,7 @@ declare const fullApi: ApiFromModules<{
   cart: typeof cart;
   http: typeof http;
   orders: typeof orders;
+  paypal: typeof paypal;
   products: typeof products;
   seed: typeof seed;
   users: typeof users;

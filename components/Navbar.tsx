@@ -2,14 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { SignInButton, UserButton, useAuth } from "@clerk/nextjs";
+import { SignInButton, UserButton, useAuth, useUser } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+
 import CartDrawer from "./CartDrawer"
 
 export default function Navbar() {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const { isLoaded, userId } = useAuth();
+    const { user } = useUser();
+    const isAdmin = user?.publicMetadata?.role === "admin";
 
     // Fetch cart data
     const cartItems = useQuery(api.cart.getCart) || [];
@@ -54,6 +57,12 @@ export default function Navbar() {
                         )}
 
                         <div className="h-5 w-px bg-zinc-800" aria-hidden="true" />
+                        {isLoaded && isAdmin && (
+                            <Link href="/admin" className="text-zinc-400 hover:text-zinc-200 font-medium 
+                            transition-colors">
+                                Admin Center
+                            </Link>
+                        )}
 
                         {/* Cart Button */}
                         <div className="flex items-center">

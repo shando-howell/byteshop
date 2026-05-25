@@ -83,6 +83,16 @@ export default defineSchema({
             country: v.string(),
         }),
 
+        customerName: v.optional(v.string()),
+        customerEmail: v.optional(v.string()),
+
+        fulfillmentStatus: v.optional(v.union(
+            v.literal("unfulfilled"),
+            v.literal("processing"),
+            v.literal("shipped"),
+            v.literal("delivered")
+        )),
+
         // Snapshot of the items at the time of purchase
         items: v.array(
             v.object({

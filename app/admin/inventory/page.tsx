@@ -126,10 +126,10 @@ export default function InventoryManager() {
                         <input 
                             required 
                             type="text" 
-                            placeholder="Slug (mx-master-3s" 
+                            placeholder="Slug (mx-master-3s)" 
                             value={formData.slug}
                             onChange={(e) => setFormData({...formData, slug: e.target.value})}
-                            className="bg-zinc-950 border border-zinc-800 rounded-lg p-3 
+                            className="col-span-2 bg-zinc-950 border border-zinc-800 rounded-lg p-3 
                             text-white focus:border-blue-500 outline-none"
                         />
                         <input 
@@ -138,7 +138,7 @@ export default function InventoryManager() {
                             placeholder="Brand" 
                             value={formData.brand}
                             onChange={(e) => setFormData({...formData, brand: e.target.value})}
-                            className="bg-zinc-950 border border-zinc-800 rounded-lg p-3 
+                            className="col-span-2 bg-zinc-950 border border-zinc-800 rounded-lg p-3 
                             text-white focus:border-blue-500 outline-none"
                         />
                     </div>
@@ -234,7 +234,7 @@ export default function InventoryManager() {
                     <div className="border border-zinc-800 rounded-lg p-4 bg-zinc-950">
                         <h3 className="text-sm font-medium text-zinc-400 mb-3">Technical Specifications</h3>
 
-                        <div className="flex gap-2 mb-4">
+                        <div className="flex flex-col md:flex-row gap-2 mb-4">
                             <input 
                                 type="text" 
                                 placeholder="Spec Name (e.g. Memory)"

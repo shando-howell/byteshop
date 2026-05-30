@@ -22,6 +22,7 @@ export default defineSchema({
 
     // Tech Gadgets and Accessories
     products: defineTable({
+        id: v.optional(v.string()),
         title: v.string(),
         slug: v.string(), // For clean urls (example: "mechanical-keyboard-k8")
         description: v.string(),
@@ -52,6 +53,7 @@ export default defineSchema({
         userId: v.id("users"),
         productId: v.id("products"),
         quantity: v.number(),
+        addedAt: v.optional(v.number())
     })
     .index("by_user", ["userId"])
     .index("by_user_and_product", ["userId", "productId"]),

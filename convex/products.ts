@@ -37,3 +37,11 @@ export const getActiveProducts = query({
         return products;
     },
 });
+
+export const getProductById = query({
+    args: {id: v.id("products")},
+    handler: async (ctx, args) => {
+        const product = await ctx.db.get(args.id);
+        return product;
+    },
+});

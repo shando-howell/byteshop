@@ -88,3 +88,64 @@ export const getCart = query({
         return populatedCart.filter((item) => item.product !== null);
     },
 });
+
+export const addItem = mutation({
+    args: {
+        productId: v.id("products"),
+        quantity: v.number()
+    },
+    handler: async (ctx, args) => {
+        // 1. Verify the user is logged in via Clerk
+        const identity = await ctx.auth.getUserIdentity();
+        if (!identity) {
+            throw new Error("You must be logged in to add items cart.")
+        }
+
+        // 2. Find the user's internal database ID using their Clerk token
+        const user = await ctx.db
+            .query("users")
+            .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
+            .first();
+
+        if (!user) {
+            throw new Error("User record not found.");
+        }
+
+        // Verify the product exists and has inventory
+        const product = await ctx.db.get(args.productId);
+
+        if (!product) {
+            throw new Error("Product not found.")
+        }
+
+        if (product.inventoryCount < 1) {
+            throw new Error("This item is currently out of stock.")
+        }
+
+        // Check if the product is already in the user's cart
+        const existingCartItem = await ctx.db
+            .query("cartItems")
+            .withIndex("by_user_and_product", (q) => (
+                q.eq("userId", user._id).eq("productId", args.productId)
+            ))
+            .first();
+
+        if (existingCartItem) {
+            // If it exists, just update the quantity
+            await ctx.db.patch(existingCartItem._id, {
+                quantity: existingCartItem.quantity + args.quantity
+            });
+        } else {
+            // Insert the item into the cart
+            await ctx.db.insert("cartItems", {
+                userId: user._id,
+                productId: args.productId,
+                quantity: 1,
+                addedAt: Date.now()
+            });
+    
+            return {success: true};
+        }
+
+    }
+})

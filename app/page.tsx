@@ -1,4 +1,4 @@
-"use client";
+export const dynamic = "force-dynamic";
 
 import { useQuery, useMutation } from "convex/react";
 import { useConvexAuth } from "convex/react";
